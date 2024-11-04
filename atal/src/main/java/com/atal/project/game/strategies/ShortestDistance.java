@@ -9,23 +9,25 @@ import com.atal.project.game.map.Point;
 
 public class ShortestDistance implements Strategy {
 
-    private Point currentPosition = new Point(0, 0); // Começa na posição 0,0
+    private Point currentPosition = new Point(0, 0);
 
     @Override
     public Point evaluatePossbileNextStep(List<Point> possibleNextSteps, Map map) {
         Point treasure = findClosestTreasure(map);
         if (treasure == null) {
-            System.out.println("Não existe caminho válido!");
+            System.out.println("Não existe caminhos válidos");
             return null;
         }
 
         List<Point> path = findShortestPath(map, currentPosition, treasure);
-        if (path == null || path.isEmpty()) return null;
+        if (path == null || path.isEmpty()) {
+            return null;
+        }
         for (Point point : path) {
-            System.out.printf("%d,%d\n", point.getPositionX(), point.getPositionY());            
+            System.out.printf("%d,%d\n", point.getPositionX(), point.getPositionY());
         };
 
-        currentPosition = path.get(0); // Move para o próximo passo
+        currentPosition = path.get(0);
         return currentPosition;
     }
 
@@ -35,13 +37,15 @@ public class ShortestDistance implements Strategy {
         queue.offer(currentPosition);
         visited[currentPosition.getPositionX()][currentPosition.getPositionY()] = true;
 
-        int[][] directions = {{1, 0}, {0, 1}}; // baixo e direita
+        int[][] directions = {{1, 0}, {0, 1}};
         while (!queue.isEmpty()) {
             Point current = queue.poll();
-            if ("T".equals(map.get(current))) return current;
+            if ("T".equals(map.get(current))) {
+                return current;
+            }
             addNeighbors(map, current, directions, queue, visited);
         }
-        return null; // Nenhum tesouro encontrado
+        return null;
     }
 
     private List<Point> findShortestPath(Map map, Point start, Point target) {
@@ -55,10 +59,12 @@ public class ShortestDistance implements Strategy {
         int[][] directions = {{1, 0}, {0, 1}};
         while (!queue.isEmpty()) {
             Point current = queue.poll();
-            if (current.equals(target)) return reconstructPath(parent, target);
+            if (current.equals(target)) {
+                return reconstructPath(parent, target);
+            }
             addNeighbors(map, current, directions, queue, visited, parent);
         }
-        return null; // Nenhum caminho encontrado
+        return null;
     }
 
     private void addNeighbors(Map map, Point current, int[][] directions, Queue<Point> queue, boolean[][] visited) {
@@ -71,7 +77,9 @@ public class ShortestDistance implements Strategy {
             if (isValidPoint(neighbor, map) && !visited[neighbor.getPositionX()][neighbor.getPositionY()] && !isObstacle(neighbor, map)) {
                 queue.offer(neighbor);
                 visited[neighbor.getPositionX()][neighbor.getPositionY()] = true;
-                if (parent != null) parent[neighbor.getPositionX()][neighbor.getPositionY()] = current;
+                if (parent != null) {
+                    parent[neighbor.getPositionX()][neighbor.getPositionY()] = current;
+                }
             }
         }
     }
@@ -81,14 +89,16 @@ public class ShortestDistance implements Strategy {
         for (Point current = target; current != null; current = parent[current.getPositionX()][current.getPositionY()]) {
             path.add(0, current);
         }
-        if (!path.isEmpty()) path.remove(0); // Remove o ponto inicial do caminho
+        if (!path.isEmpty()) {
+            path.remove(0);
+        }
         return path;
     }
 
     private boolean isValidPoint(Point point, Map map) {
         int[] size = map.getScenarioSize();
-        return point.getPositionX() >= 0 && point.getPositionY() >= 0 &&
-               point.getPositionX() < size[0] && point.getPositionY() < size[1];
+        return point.getPositionX() >= 0 && point.getPositionY() >= 0
+                && point.getPositionX() < size[0] && point.getPositionY() < size[1];
     }
 
     private boolean isObstacle(Point point, Map map) {

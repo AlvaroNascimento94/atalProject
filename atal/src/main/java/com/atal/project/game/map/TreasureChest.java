@@ -1,6 +1,5 @@
 package com.atal.project.game.map;
 
-
 public class TreasureChest extends Obstacle{
 	public static final String CHEST_TRESURE_CHARACTER = "F";
 	public static final String CHEST_TRAP_CHARACTER = "A";
@@ -9,5 +8,4 @@ public class TreasureChest extends Obstacle{
 	public TreasureChest(Point coordinates) {
 		super(coordinates);
 	}
-
 }
