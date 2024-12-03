@@ -10,7 +10,7 @@ public class Main {
 		for(int i = 0; i < totalRuns; i ++) {
 			Game g = new Game();
 			g.run();
-			if(i == 99) {
+			if(i == totalRuns - 1) {
 				g.testGame(totalRuns);
 			}
 		}

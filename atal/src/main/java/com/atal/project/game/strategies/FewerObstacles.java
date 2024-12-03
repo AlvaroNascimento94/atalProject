@@ -1,14 +1,10 @@
 package com.atal.project.game.strategies;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
-import java.util.Set;
 
-import com.atal.project.game.map.Map;
+import com.atal.project.game.map.GameMap;
 import com.atal.project.game.map.Monster;
 import com.atal.project.game.map.Point;
 import com.atal.project.game.map.Rock;
@@ -16,11 +12,11 @@ import com.atal.project.game.map.TreasureChest;
 
 public class FewerObstacles implements Strategy {
 
-	private List<Point> pointsObstacles = new ArrayList<>();
-	private List<Point> pointTreasure = new ArrayList<>();
+	private final List<Point> pointsObstacles = new ArrayList<>();
+	private final List<Point> pointTreasure = new ArrayList<>();
 
 	@Override
-	public Point evaluatePossbileNextStep(List<Point> possibleNextSteps, Map map) {
+	public Point evaluatePossbileNextStep(List<Point> possibleNextSteps, GameMap map) {
 		pointsObstacles.add(new Point(0, 0));
 		Iterator<Point> it = possibleNextSteps.iterator();
 		int min = Integer.MAX_VALUE;
@@ -38,7 +34,7 @@ public class FewerObstacles implements Strategy {
 			} else if (count <= min) {
 				min = count;
 				pointSelected = p;
-			} 
+			}
 		}
 		
 		pointsObstacles.add(pointSelected);
@@ -46,9 +42,9 @@ public class FewerObstacles implements Strategy {
 
 	}
 
-	public int evaluatePoint(Point possibleNextSteps, Map map) {
+	public int evaluatePoint(Point possibleNextSteps, GameMap map) {
 		int count = 0;
-		List<Point> points = new ArrayList<Point>();
+		List<Point> points = new ArrayList<>();
 		
 		//Adicionando as Possíveis jogadas ao redor
 		points.add(new Point(possibleNextSteps.getPositionX() - 1, possibleNextSteps.getPositionY() - 1));
@@ -109,7 +105,7 @@ public class FewerObstacles implements Strategy {
 		return validPoint;
 	}
 	
-	public boolean isPointBack(Point p, Map map) {
+	public boolean isPointBack(Point p, GameMap map) {
 		boolean validPoint = false;
 		Point robotPosition = map.getRobotLocation();
 		if(p.getPositionY() < robotPosition.getPositionY()) {

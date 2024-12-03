@@ -9,17 +9,22 @@ import java.util.Random;
 
 import com.atal.project.game.Player;
 
-public class Map {
+public class GameMap {
 
     private static final int[] ROCK_POSITIONS_X = {0, 1, 2, 3, 4, 5, 6};
     private static final int[] ROCK_POSITIONS_Y = {0, 1, 2, 3, 4, 5, 6};
 
     private String[][] scenario;
+
+    public String[][] getScenario() {
+        return this.scenario;
+    }
+
     private Point robotLocation;
 
     private HashMap<String, Point> treasureChests;
 
-    public Map(int scenarioSizeX, int scenarioSizeY) {
+    public GameMap(int scenarioSizeX, int scenarioSizeY) {
         this.treasureChests = new HashMap<>();
         this.scenario = new String[scenarioSizeX][scenarioSizeY];
         this.robotLocation = new Point(0, 0);

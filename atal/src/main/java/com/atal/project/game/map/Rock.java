@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Rock {
 	public static String CHARACTER = "R";
-	private List<Point> points;
+	private final List<Point> points;
 	
 	Rock(List<Point> points) {
 		this.points = points;

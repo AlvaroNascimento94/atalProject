@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import com.atal.project.game.map.Map;
+import com.atal.project.game.map.GameMap;
 import com.atal.project.game.map.Point;
 
 public class ShortestDistance implements Strategy {
@@ -12,7 +12,7 @@ public class ShortestDistance implements Strategy {
     private Point currentPosition = new Point(0, 0);
 
     @Override
-    public Point evaluatePossbileNextStep(List<Point> possibleNextSteps, Map map) {
+    public Point evaluatePossbileNextStep(List<Point> possibleNextSteps, GameMap map) {
         Point treasure = findClosestTreasure(map);
         if (treasure == null) {
             System.out.println("Não existe caminhos válidos");
@@ -23,15 +23,12 @@ public class ShortestDistance implements Strategy {
         if (path == null || path.isEmpty()) {
             return null;
         }
-        for (Point point : path) {
-            System.out.printf("%d,%d\n", point.getPositionX(), point.getPositionY());
-        };
 
         currentPosition = path.get(0);
         return currentPosition;
     }
 
-    private Point findClosestTreasure(Map map) {
+    private Point findClosestTreasure(GameMap map) {
         Queue<Point> queue = new LinkedList<>();
         boolean[][] visited = createVisitedGrid(map);
         queue.offer(currentPosition);
@@ -48,7 +45,7 @@ public class ShortestDistance implements Strategy {
         return null;
     }
 
-    private List<Point> findShortestPath(Map map, Point start, Point target) {
+    private List<Point> findShortestPath(GameMap map, Point start, Point target) {
         boolean[][] visited = createVisitedGrid(map);
         Point[][] parent = new Point[map.getScenarioSize()[0]][map.getScenarioSize()[1]];
         Queue<Point> queue = new LinkedList<>();
@@ -67,11 +64,11 @@ public class ShortestDistance implements Strategy {
         return null;
     }
 
-    private void addNeighbors(Map map, Point current, int[][] directions, Queue<Point> queue, boolean[][] visited) {
+    private void addNeighbors(GameMap map, Point current, int[][] directions, Queue<Point> queue, boolean[][] visited) {
         addNeighbors(map, current, directions, queue, visited, null);
     }
 
-    private void addNeighbors(Map map, Point current, int[][] directions, Queue<Point> queue, boolean[][] visited, Point[][] parent) {
+    private void addNeighbors(GameMap map, Point current, int[][] directions, Queue<Point> queue, boolean[][] visited, Point[][] parent) {
         for (int[] dir : directions) {
             Point neighbor = new Point(current.getPositionX() + dir[0], current.getPositionY() + dir[1]);
             if (isValidPoint(neighbor, map) && !visited[neighbor.getPositionX()][neighbor.getPositionY()] && !isObstacle(neighbor, map)) {
@@ -95,18 +92,18 @@ public class ShortestDistance implements Strategy {
         return path;
     }
 
-    private boolean isValidPoint(Point point, Map map) {
+    private boolean isValidPoint(Point point, GameMap map) {
         int[] size = map.getScenarioSize();
         return point.getPositionX() >= 0 && point.getPositionY() >= 0
                 && point.getPositionX() < size[0] && point.getPositionY() < size[1];
     }
 
-    private boolean isObstacle(Point point, Map map) {
+    private boolean isObstacle(Point point, GameMap map) {
         String cell = map.get(point);
         return cell != null && (cell.equals("R") || cell.equals("M") || cell.equals("B"));
     }
 
-    private boolean[][] createVisitedGrid(Map map) {
+    private boolean[][] createVisitedGrid(GameMap map) {
         int[] size = map.getScenarioSize();
         return new boolean[size[0]][size[1]];
     }

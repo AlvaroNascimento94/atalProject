@@ -33,7 +33,7 @@ public class Point {
 	}
 
 	public String getId() {
-		return id;
+		return getPositionX() + "-" + getPositionY();
 	}
 
 	public void setId(String id) {

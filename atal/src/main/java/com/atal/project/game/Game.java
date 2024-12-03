@@ -1,26 +1,27 @@
 package com.atal.project.game;
 
-import com.atal.project.game.map.Map;
+import com.atal.project.game.map.GameMap;
 import com.atal.project.game.map.Point;
 import com.atal.project.game.map.TreasureChest;
-import com.atal.project.game.strategies.FewerObstacles;
+import com.atal.project.game.strategies.Voting;
 
 
 public class Game {
 	
-	private Map map;
-	private Player player;
+	private final GameMap map;
+	private final Player player;
 	private static double errorMap;
     private static double sucess;
     private static double empty;
     private static double trap;
     
 	public Game() {
-		this.map = new Map(8, 8);
+		this.map = new GameMap(8, 8);
 		//this.player = new Player(new FewerObstaclesAndShorterDistance());
-		this.player = new Player(new FewerObstacles());
+		//this.player = new Player(new FewerObstacles());
 		//this.player = new Player(new Sort());
 		//this.player = new Player(new ShortestDistance());
+		this.player = new Player(new Voting());
 	}
 	
 	public void run() {
@@ -38,13 +39,11 @@ public class Game {
 				if (space != null && space.equals(TreasureChest.CHARACTER)) {
 					this.map.openTreasureChest(nextPoint);
 					this.map.print();
-					if (this.map.get(nextPoint).equals(TreasureChest.CHEST_TRESURE_CHARACTER)) {
-                        sucess++;
-                    } else if (this.map.get(nextPoint).equals(TreasureChest.CHEST_TRAP_CHARACTER)) {
-                        trap++;
-                    } else if (this.map.get(nextPoint).equals(TreasureChest.CHEST_EMPTY_CHARACTER)) {
-                        empty++;
-                    }
+					switch (this.map.get(nextPoint)) {
+						case TreasureChest.CHEST_TRESURE_CHARACTER -> sucess++;
+						case TreasureChest.CHEST_TRAP_CHARACTER -> trap++;
+						case TreasureChest.CHEST_EMPTY_CHARACTER -> empty++;
+					}
 					break;
 				} else {
 					this.map.moveRobot(nextPoint);

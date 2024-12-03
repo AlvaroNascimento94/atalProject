@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.atal.project.game.map.Map;
+import com.atal.project.game.map.GameMap;
 import com.atal.project.game.map.Point;
 
 public class Sort implements Strategy {
 
-    private List<Point> pointsVisited = new ArrayList<>();
+    private final List<Point> pointsVisited = new ArrayList<>();
 
     @Override
-    public Point evaluatePossbileNextStep(List<Point> possibleNextSteps, Map map) {
+    public Point evaluatePossbileNextStep(List<Point> possibleNextSteps, GameMap map) {
         Random random = new Random();
         if (possibleNextSteps != null && !possibleNextSteps.isEmpty()) {
 
@@ -33,14 +33,14 @@ public class Sort implements Strategy {
         return null;
     }
 
-    private boolean isValidStep(Point point, Map map) {
+    private boolean isValidStep(Point point, GameMap map) {
         int x = point.getPositionX();
         int y = point.getPositionY();
         int[] scenarioSize = map.getScenarioSize();
         return x >= 0 && x < scenarioSize[0] && y >= 0 && y < scenarioSize[1] && !isObstacle(point, map);
     }
 
-    private boolean isObstacle(Point point, Map map) {
+    private boolean isObstacle(Point point, GameMap map) {
         String cell = map.get(point);
         return cell != null && (cell.equals("R") || cell.equals("M"));
     }
