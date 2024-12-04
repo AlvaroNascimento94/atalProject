@@ -39,7 +39,6 @@ public class GameMap {
         generateMonsters();
 
         return scenario;
-
     }
 
     private void generateMapOfTreasure() {
@@ -178,7 +177,6 @@ public class GameMap {
                 }
             }
         }
-
     }
 
     public Point getRobotLocation() {

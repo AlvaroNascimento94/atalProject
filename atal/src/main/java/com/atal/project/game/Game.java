@@ -3,7 +3,7 @@ package com.atal.project.game;
 import com.atal.project.game.map.GameMap;
 import com.atal.project.game.map.Point;
 import com.atal.project.game.map.TreasureChest;
-import com.atal.project.game.strategies.Voting;
+import com.atal.project.game.strategies.binaryTree.BinaryTree;
 
 
 public class Game {
@@ -21,17 +21,18 @@ public class Game {
 		//this.player = new Player(new FewerObstacles());
 		//this.player = new Player(new Sort());
 		//this.player = new Player(new ShortestDistance());
-		this.player = new Player(new Voting());
+		this.player = new Player(new BinaryTree(map));
+		//this.player = new Player(new Voting());
 	}
 	
 	public void run() {
-		
+		System.out.println();
 		this.map.print();
 		System.out.println();
 		while(true) {
 			Point nextPoint = this.player.evaluatePossbileNextStep(map);
 			if (nextPoint == null) {
-				System.out.println("Sem jogadas válidas");
+				System.out.println("Sem jogadas válidas \n");
 				errorMap++;
 				break;
 			} else {

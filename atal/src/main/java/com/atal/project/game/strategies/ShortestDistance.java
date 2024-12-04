@@ -1,5 +1,6 @@
 package com.atal.project.game.strategies;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -10,12 +11,12 @@ import com.atal.project.game.map.Point;
 public class ShortestDistance implements Strategy {
 
     private Point currentPosition = new Point(0, 0);
+    private List<Point> pointsVisited = new ArrayList<>();
 
     @Override
     public Point evaluatePossbileNextStep(List<Point> possibleNextSteps, GameMap map) {
         Point treasure = findClosestTreasure(map);
         if (treasure == null) {
-            System.out.println("Não existe caminhos válidos");
             return null;
         }
 
@@ -25,6 +26,11 @@ public class ShortestDistance implements Strategy {
         }
 
         currentPosition = path.get(0);
+
+        if (isCountVisitedPoint(currentPosition)) {
+            return null;
+        }
+        pointsVisited.add(currentPosition);
         return currentPosition;
     }
 
@@ -106,5 +112,18 @@ public class ShortestDistance implements Strategy {
     private boolean[][] createVisitedGrid(GameMap map) {
         int[] size = map.getScenarioSize();
         return new boolean[size[0]][size[1]];
+    }
+
+    private boolean isCountVisitedPoint(Point point) {
+        int count = 0;
+        for (Point p : pointsVisited) {
+            if (p.getPositionX() == point.getPositionX() || p.getPositionY() == point.getPositionY()) {
+                count++;
+            }
+        }
+        if (count <= 25) {
+            return false;
+        }
+        return true;
     }
 }

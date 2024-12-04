@@ -24,16 +24,14 @@ public class FewerObstacles implements Strategy {
 		while (it.hasNext()) {
 			Point p = it.next();
 			int count = evaluatePoint(p, map);
-			if(isNotValidPoint(p)) {
-				continue;
-			} else if (isPointTreasure(p)){
-				pointSelected = p;
-				break;
-			} else if (isPointBack(p, map)) {
-				continue;
-			} else if (count <= min) {
-				min = count;
-				pointSelected = p;
+			if(!isNotValidPoint(p) && !isPointBack(p, map)) {
+				if (isPointTreasure(p)){
+					pointSelected = p;
+					break;
+				} else if (count <= min) {
+					min = count;
+					pointSelected = p;
+				}
 			}
 		}
 		
