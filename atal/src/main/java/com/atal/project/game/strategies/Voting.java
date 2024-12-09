@@ -8,10 +8,9 @@ import java.util.Map.Entry;
 
 import com.atal.project.game.map.GameMap;
 import com.atal.project.game.map.Point;
-import com.atal.project.game.strategies.binaryTree.BinaryTree;
 
 public class Voting implements Strategy {
-	
+
     @Override
     public Point evaluatePossbileNextStep(List<Point> possibleNextStep, GameMap map) {
         Sort sort = new Sort();
@@ -29,36 +28,29 @@ public class Voting implements Strategy {
         points.add(fewerObstaclesPoint);
         points.add(shortestDistancePoint);
         //points.add(binaryTreePoint);
-        
+
         Map<Point, Integer> voting = new HashMap<>();
         for (int i = 0; i < points.size(); i++) {
             Point p = points.get(i);
-            if(voting.get(p) == null){
+            if (voting.get(p) == null) {
                 voting.put(p, 1);
+            } else {
+                voting.put(p, voting.get(p) + 1);
             }
-            else{
-                voting.put(p, voting.get(p)+1);
+        }
+        return getMostVotedPoint(voting);
+    }
+
+    private Point getMostVotedPoint(Map<Point, Integer> voting) {
+        Integer biggestValue = Integer.MIN_VALUE;
+        Point point = null;
+        for (Entry<Point, Integer> entry : voting.entrySet()) {
+            if (entry.getKey() != null && entry.getValue() > biggestValue) {     
+                biggestValue = entry.getValue();
+                point = entry.getKey();
             }
         }
 
-        return getMostVotedPoint(voting);
+        return point;
     }
-    
-    private Point getMostVotedPoint(Map<Point, Integer> voting) {
-		Integer biggestValue = Integer.MIN_VALUE;
-		Point point = null;
-		for (Entry<Point, Integer> entry : voting.entrySet()) {
-			if (entry.getKey() == null) {
-				continue;
-			} else {
-				if (entry.getValue() > biggestValue) {
-					biggestValue = entry.getValue();
-					point = entry.getKey();
-				}	
-			}
-        }
-	
-		return point;
-	}
- 
 }

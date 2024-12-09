@@ -21,9 +21,7 @@ public class ShortestDistance implements Strategy {
         }
 
         List<Point> path = findShortestPath(map, currentPosition, treasure);
-        if (path == null || path.isEmpty()) {
-            return null;
-        }
+        if (path == null || path.isEmpty()) return null;
 
         currentPosition = path.get(0);
 
@@ -43,9 +41,7 @@ public class ShortestDistance implements Strategy {
         int[][] directions = {{1, 0}, {0, 1}};
         while (!queue.isEmpty()) {
             Point current = queue.poll();
-            if ("T".equals(map.get(current))) {
-                return current;
-            }
+            if ("T".equals(map.get(current))) return current;
             addNeighbors(map, current, directions, queue, visited);
         }
         return null;
@@ -62,9 +58,7 @@ public class ShortestDistance implements Strategy {
         int[][] directions = {{1, 0}, {0, 1}};
         while (!queue.isEmpty()) {
             Point current = queue.poll();
-            if (current.equals(target)) {
-                return reconstructPath(parent, target);
-            }
+            if (current.equals(target)) return reconstructPath(parent, target);
             addNeighbors(map, current, directions, queue, visited, parent);
         }
         return null;
@@ -80,9 +74,7 @@ public class ShortestDistance implements Strategy {
             if (isValidPoint(neighbor, map) && !visited[neighbor.getPositionX()][neighbor.getPositionY()] && !isObstacle(neighbor, map)) {
                 queue.offer(neighbor);
                 visited[neighbor.getPositionX()][neighbor.getPositionY()] = true;
-                if (parent != null) {
-                    parent[neighbor.getPositionX()][neighbor.getPositionY()] = current;
-                }
+                if (parent != null) parent[neighbor.getPositionX()][neighbor.getPositionY()] = current;
             }
         }
     }
@@ -92,16 +84,14 @@ public class ShortestDistance implements Strategy {
         for (Point current = target; current != null; current = parent[current.getPositionX()][current.getPositionY()]) {
             path.add(0, current);
         }
-        if (!path.isEmpty()) {
-            path.remove(0);
-        }
+        if (!path.isEmpty()) path.remove(0);
         return path;
     }
 
     private boolean isValidPoint(Point point, GameMap map) {
         int[] size = map.getScenarioSize();
-        return point.getPositionX() >= 0 && point.getPositionY() >= 0
-                && point.getPositionX() < size[0] && point.getPositionY() < size[1];
+        return point.getPositionX() >= 0 && point.getPositionY() >= 0 &&
+                point.getPositionX() < size[0] && point.getPositionY() < size[1];
     }
 
     private boolean isObstacle(Point point, GameMap map) {
@@ -117,7 +107,7 @@ public class ShortestDistance implements Strategy {
     private boolean isCountVisitedPoint(Point point) {
         int count = 0;
         for (Point p : pointsVisited) {
-            if (p.getPositionX() == point.getPositionX() || p.getPositionY() == point.getPositionY()) {
+            if (p.getPositionX() == point.getPositionX() || p.getPositionY() == point.getPositionY() ) {
                 count++;
             }
         }

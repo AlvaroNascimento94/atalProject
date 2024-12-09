@@ -10,16 +10,10 @@ import java.util.Random;
 import com.atal.project.game.Player;
 
 public class GameMap {
-
     private static final int[] ROCK_POSITIONS_X = {0, 1, 2, 3, 4, 5, 6};
     private static final int[] ROCK_POSITIONS_Y = {0, 1, 2, 3, 4, 5, 6};
 
     private String[][] scenario;
-
-    public String[][] getScenario() {
-        return this.scenario;
-    }
-
     private Point robotLocation;
 
     private HashMap<String, Point> treasureChests;
@@ -39,6 +33,7 @@ public class GameMap {
         generateMonsters();
 
         return scenario;
+
     }
 
     private void generateMapOfTreasure() {
@@ -75,10 +70,15 @@ public class GameMap {
 
                 int index = random.nextInt(treasureCharacters.size());
                 treasureChests.put(treasureCharacters.get(index), new Point(treasureChestsX, treasureChestsY));
+                //System.out.println(treasureCharacters.get(index));
                 treasureCharacters.remove(index);
                 treasureChestCount++;
             }
         }
+    }
+
+    public Object getTreasureLocalization() {
+        return treasureChests.get(TreasureChest.CHEST_TRESURE_CHARACTER);
     }
 
     private void generateMonsters() {
@@ -150,6 +150,7 @@ public class GameMap {
                 }
             }
 
+
             rocks.add(new Rock(rockPoints));
             rockCount++;
 
@@ -168,7 +169,7 @@ public class GameMap {
         for (int i = 0; i < scenario.length; i++) {
             for (int j = 0; j < scenario[i].length; j++) {
                 if (scenario[i][j] == null) {
-                    scenario[i][j] = ".";
+                    scenario[i][j] = "*";
                 }
                 if (j == (scenario[i].length - 1)) {
                     System.out.println(scenario[i][j]);
@@ -177,6 +178,7 @@ public class GameMap {
                 }
             }
         }
+
     }
 
     public Point getRobotLocation() {
@@ -189,7 +191,7 @@ public class GameMap {
 
     public void moveRobot(Point nextPoint) {
         this.scenario[nextPoint.getPositionX()][nextPoint.getPositionY()] = Player.CHARACTER;
-        this.scenario[this.robotLocation.getPositionX()][this.robotLocation.getPositionY()] = ".";
+        this.scenario[this.robotLocation.getPositionX()][this.robotLocation.getPositionY()] = "*";
         this.robotLocation = nextPoint;
     }
 
@@ -199,10 +201,13 @@ public class GameMap {
             String key = it.next();
             if (treasureChests.get(key).equals(nextPoint)) {
                 if (key.equals(TreasureChest.CHEST_TRESURE_CHARACTER)) {
+                    System.out.println();
                     System.out.println("Parabéns você encontrou o tesouro!");
                 } else if (key.equals(TreasureChest.CHEST_TRAP_CHARACTER)) {
+                    System.out.println();
                     System.out.println("O jogo acabou! Você morreu, caiu em uma armadilha");
                 } else {
+                    System.out.println();
                     System.out.println("Aqui não tem nada");
                 }
                 this.scenario[nextPoint.getPositionX()][nextPoint.getPositionY()] = key;
@@ -214,5 +219,9 @@ public class GameMap {
     public int[] getScenarioSize() {
         int[] size = {this.scenario.length, this.scenario[0].length};
         return size;
+    }
+
+    public String[][] getScenario() {
+        return scenario;
     }
 }

@@ -2,83 +2,111 @@ package com.atal.project.game.strategies.binaryTree;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import com.atal.project.game.Player;
-import com.atal.project.game.map.GameMap;
-import com.atal.project.game.map.MapOfTreasure;
-import com.atal.project.game.map.Monster;
-import com.atal.project.game.map.Point;
-import com.atal.project.game.map.TreasureChest;
+import com.atal.project.game.map.*;
 import com.atal.project.game.strategies.Strategy;
 
 public class BinaryTree implements Strategy {
 
+    private GameMap gameMap;
     private NodeTree<String> root;
     private LinkedList<NodeTree<String>> sequenceSelected;
+    private boolean pointT;
 
     public BinaryTree(GameMap map) {
+        map.print();
+        this.gameMap = map;
+        this.pointT = false;
+        System.out.println("");
         this.root = new NodeTree<>();
         this.sequenceSelected = new LinkedList<>();
-        updateTree(map);
+
+        buildTreeAndCalculatePath(map, 0, 0);
     }
 
-    public void updateTree(GameMap map) {
-        printMap(map.getScenario());
-        this.root = buildTree(map.getScenario(), 0, 0);
+    public void insert(String value) {
+        if (this.root.getValue() == null) {
+            this.root.setValue(value);
+        } else {
+            insertInTree(value, this.root);
+        }
     }
 
-    public NodeTree<String> buildTree(String[][] map, int i, int j) {
-        if (i < 0 || i >= map.length || j < 0 || j >= map[0].length) {
-            return null;
+    public void insertInTree(String value, NodeTree<String> node) {
+        if (node.getValue().equals(value)) {
+            if (node.getLeft() == null) {
+                NodeTree<String> newNode = new NodeTree<String>();
+                newNode.setValue(value);
+                node.setLeft(newNode);
+            } else {
+                insertInTree(value, node.getLeft());
+            }
+        } else {
+            if (node.getRight() == null) {
+                NodeTree<String> newNode = new NodeTree<String>();
+                newNode.setValue(value);
+                node.setRight(newNode);
+            } else {
+                insertInTree(value, node.getRight());
+            }
         }
+    }
 
-        if (map[i][j] == null) {
-            return null;
+    public boolean findBFS(String value) {
+        if (this.root == null) {
+            System.out.println("Árvore Vazia");
+            return false;
         }
+        Queue<NodeTree<String>> queue = new LinkedList<>();
+        queue.add(root);
 
-        if (map[i][j] != null && (map[i][j].equals("*")
-                || map[i][j].equals(Player.CHARACTER)
-                || map[i][j].equals(TreasureChest.CHARACTER)
-                || map[i][j].equals(MapOfTreasure.CHARACTER)
-                || map[i][j].equals(Monster.CHARACTER))) {
-            NodeTree<String> newNode = new NodeTree<>(map[i][j], i, j);
-            newNode.setLeft(buildTree(map, i, j + 1));
-            newNode.setRight(buildTree(map, i + 1, j));
-            return newNode;
+        while (!queue.isEmpty()) {
+            NodeTree<String> nextNode = queue.poll();
+            if (nextNode.getValue().equals(value)) {
+                return true;
+            }
+            if (nextNode.getLeft() != null) {
+                queue.add(nextNode.getLeft());
+            }
+            if (nextNode.getRight() != null) {
+                queue.add(nextNode.getRight());
+            }
         }
+        return false;
 
-        return null;
+    }
+
+    public void buildTreeAndCalculatePath(GameMap map, int i, int j) {
+        this.root = buildTreeAndCalculatePath(map.getScenario(), 0, 0);
+        this.DFS(this.root);
     }
 
     public void DFS(NodeTree<String> node) {
         LinkedList<NodeTree<String>> path = new LinkedList<>();
 
-        if (!preOrder(node, MapOfTreasure.CHARACTER, path)) {
-            printTree(this.root);
-            return;
-        }
+        Object treasureLocation = gameMap.getTreasureLocalization();
+        Point point = (Point) treasureLocation;
 
-        NodeTree<String> mapOfTreasure = path.getLast();
-        path = new LinkedList<>();
-
-        if (!preOrder(node, mapOfTreasure, path)) {
-            printTree(this.root);
-            return;
-        }
-
+        preOrder(node, point, path);
         this.sequenceSelected = path;
-        if (!sequenceSelected.isEmpty()) {
-            sequenceSelected.removeFirst();
+
+        if (!this.sequenceSelected.isEmpty()) {
+            this.sequenceSelected.removeFirst();
+        } else {
+            System.out.println("A sequência está vazia. Não é possível remover o primeiro elemento.");
         }
+
     }
 
-    public boolean preOrder(NodeTree<String> node, Object value, LinkedList<NodeTree<String>> path) {
-        if (node == null || node.getValue() == null) {
+    public boolean preOrder(NodeTree<String> node, Point value, LinkedList<NodeTree<String>> path) {
+        if (node == null) {
             return false;
         }
 
         path.add(node);
-        if (node.getValue().equals(value)) {
+        if (node.getI() == value.getPositionX() && node.getJ() == value.getPositionY()) {
             return true;
         }
 
@@ -87,37 +115,57 @@ public class BinaryTree implements Strategy {
         }
 
         path.removeLast();
+        System.out.println("");
         return false;
     }
 
-    @Override
-    public Point evaluatePossbileNextStep(List<Point> possibleNextStep, GameMap map) {
-        updateTree(map);
-
-        DFS(this.root);
-
-        if (!this.sequenceSelected.isEmpty()) {
-            NodeTree<String> nextNode = this.sequenceSelected.getFirst();
-            return new Point(nextNode.getI(), nextNode.getJ());
+    public NodeTree<String> buildTreeAndCalculatePath(String[][] map, int i, int j) {
+        if (i < 0 || i >= map.length || j < 0 || j >= map[0].length) {
+            return null;
         }
 
-        return possibleNextStep.isEmpty() ? null : possibleNextStep.get(0);
-    }
+        Object treasureLocation = gameMap.getTreasureLocalization();
+        Point point = (Point) treasureLocation;
 
-    public void printMap(String[][] map) {
-        for(int i = 0; i < map.length; i++) {
-            for(int j = 0; j < map[i].length; j++) {
-                System.out.print((map[i][j] == null ? "." : map[i][j]) + " ");
+        if (map[i][j].equals(TreasureChest.CHARACTER) && (point.getPositionX() != i || point.getPositionY() != j)) {
+            return null;
+        }
+        if (!map[i][j].equals(Rock.CHARACTER) && !map[i][j].equals(Monster.CHARACTER)) {
+            NodeTree<String> newNode = new NodeTree<>(map[i][j], i, j);
+
+            if (map[i][j].equals(MapOfTreasure.CHARACTER)) {
+                this.pointT = true;
+                newNode.setTreasure(this.gameMap.getTreasureLocalization());
             }
-            System.out.println();
+
+            // Prioritize nodes leading to the treasure
+            NodeTree<String> leftNode = buildTreeAndCalculatePath(map, i + 1, j);
+            NodeTree<String> rightNode = buildTreeAndCalculatePath(map, i, j + 1);
+
+            if (this.pointT && leftNode != null && leftNode.getTreasure() != null) {
+                newNode.setLeft(leftNode);
+            } else if (this.pointT && rightNode != null && rightNode.getTreasure() != null) {
+                newNode.setRight(rightNode);
+            } else {
+                newNode.setLeft(leftNode);
+                newNode.setRight(rightNode);
+            }
+            return newNode;
         }
+
+        return null;
     }
 
-    public void printTree(NodeTree<String> node) {
-        if (node == null) {
-            return;
+    public Point evaluatePossbileNextStep(List<Point> possibleNextStep, GameMap gameMap) {
+        if (!sequenceSelected.isEmpty()) {
+            NodeTree<String> nextPoint = sequenceSelected.remove(0);
+            if (nextPoint != null) {
+                if (!nextPoint.isNILL()) {
+                    return new Point(nextPoint.getI(), nextPoint.getJ());
+                }
+            }
         }
-        printTree(node.getLeft());
-        printTree(node.getRight());
+        return null;
     }
+
 }

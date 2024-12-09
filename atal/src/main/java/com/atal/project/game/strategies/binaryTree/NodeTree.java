@@ -1,16 +1,14 @@
 package com.atal.project.game.strategies.binaryTree;
 
-public class NodeTree<T extends Object> {
+public class NodeTree<T> {
 
     private T value;
-    private NodeTree<T> left;
     private int i;
     private int j;
-    
-    private NodeTree<T> right;
-    private NodeTree<T> father;
+    private Object treasure;
 
-    private NodeTree<T> treasureLocalization;
+    private NodeTree<T> left;
+    private NodeTree<T> right;
 
     public NodeTree() {
     }
@@ -19,6 +17,14 @@ public class NodeTree<T extends Object> {
         this.value = value;
         this.i = i;
         this.j = j;
+    }
+
+    public void setTreasure(Object treasure) {
+        this.treasure = treasure;
+    }
+
+    public Object getTreasure() {
+        return treasure;
     }
 
     public int getI() {
@@ -61,15 +67,17 @@ public class NodeTree<T extends Object> {
         this.right = right;
     }
 
-    public NodeTree<T> getFather() {
-        return father;
-    }
-
-    public void setFather(NodeTree<T> father) {
-        this.father = father;
-    }
-
     public boolean isNILL() {
-        return this.value == null;
+        return this.getValue() == null;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof String) {
+            String value = (String) obj;
+            return this.getValue().equals(value);
+        }
+        NodeTree<T> node = (NodeTree) obj;
+        return this.getI() == node.getI() && this.getJ() == node.getJ();
     }
 }
